@@ -43,7 +43,7 @@ public class Builder {
     public func build() -> URL {
         parameters.append("appid=" + OpenWeatherMapSDK.apiKey)
         let parametersString = parameters.joined(separator: "&")
-        let urlString = Constants.baseUrl + "?" + parametersString
+        let urlString = Constants.baseUrl + method() + "?" + parametersString
         guard let url = URL(string: urlString) else {
             fatalError()
         }
