@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Coordinates: Decodable, CustomStringConvertible {
+public struct Coordinates: Decodable, CustomStringConvertible {
     
     enum CoordinatesCodingKey: String, CodingKey {
         
@@ -23,7 +23,7 @@ struct Coordinates: Decodable, CustomStringConvertible {
     }
 }
 
-struct Weather: Decodable, CustomStringConvertible {
+public struct Weather: Decodable, CustomStringConvertible {
     
     enum WeatherCodingKey: String, CodingKey {
         
@@ -44,7 +44,7 @@ struct Weather: Decodable, CustomStringConvertible {
     }
 }
 
-struct CurrentMain: Decodable, CustomStringConvertible {
+public struct CurrentMain: Decodable, CustomStringConvertible {
     
     enum CurrentMainCodingKey: String, CodingKey {
         
@@ -72,7 +72,7 @@ struct CurrentMain: Decodable, CustomStringConvertible {
     }
 }
 
-struct Wind: Decodable, CustomStringConvertible {
+public struct Wind: Decodable, CustomStringConvertible {
     
     enum WindCodingKey: String, CodingKey {
         
@@ -90,7 +90,7 @@ struct Wind: Decodable, CustomStringConvertible {
     }
 }
 
-struct Clouds: Decodable, CustomStringConvertible {
+public struct Clouds: Decodable, CustomStringConvertible {
     
     enum CloudsCodingKey: String, CodingKey {
         
@@ -104,7 +104,7 @@ struct Clouds: Decodable, CustomStringConvertible {
     }
 }
 
-struct Hours: Decodable, CustomStringConvertible {
+public struct Hours: Decodable, CustomStringConvertible {
     
     enum HoursCodingKey: String, CodingKey {
         
@@ -120,7 +120,7 @@ struct Hours: Decodable, CustomStringConvertible {
     }
 }
 
-struct System: Decodable, CustomStringConvertible {
+public struct System: Decodable, CustomStringConvertible {
     
     enum SystemCodingKey: String, CodingKey {
         
@@ -139,7 +139,7 @@ struct System: Decodable, CustomStringConvertible {
     }
 }
 
-struct CurrentWeather: Decodable, CustomStringConvertible {
+public struct CurrentWeather: Decodable, CustomStringConvertible {
     
     enum CurrentWeatherCodingKey: String, CodingKey {
         
