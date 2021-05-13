@@ -179,6 +179,6 @@ public struct CurrentWeather: Decodable, CustomStringConvertible {
     var cityName: String
     
     public var description: String {
-        return "(coordinates: \(coordinates), weather: \(weather), main: \(main), clouds: \(clouds), rain: \(rain), show: \(snow), date: \(date), system: \(system), timezone: \(timezone), cityId: \(cityId), cityName: \(cityName))"
+        return "(coordinates: \(123), weather: \(weather), main: \(main), clouds: \(clouds), rain: \(rain), show: \(snow), date: \(date), system: \(system), timezone: \(timezone), cityId: \(cityId), cityName: \(cityName))"
     }
 }
