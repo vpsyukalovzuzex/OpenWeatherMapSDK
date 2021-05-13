@@ -11,7 +11,7 @@ public struct Coordinates: Decodable, CustomStringConvertible {
     
     enum CoordinatesCodingKey: String, CodingKey {
         
-        case lat
+        case lati = "lat"
         case lon
     }
     
@@ -24,7 +24,7 @@ public struct Coordinates: Decodable, CustomStringConvertible {
     
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CoordinatesCodingKey.self)
-        self.lat = try container.decode(Float.self, forKey: .lat)
+        self.lat = try container.decode(Float.self, forKey: .lati)
         self.lon = try container.decode(Float.self, forKey: .lon)
     }
 }
