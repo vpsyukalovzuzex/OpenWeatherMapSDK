@@ -176,6 +176,7 @@ public class RequestBuilder {
             block(.failure(OWMError.urlIsWrong))
             return nil
         }
+        print("-->> \(url.absoluteString)")
         return AF.request(url).validate().responseDecodable(of: type, queue: .main) { response in
             if let error = response.error {
                 block(.failure(error))
