@@ -233,7 +233,7 @@ enum OWMError: CustomNSError, LocalizedError {
         case .valueIsNil:
             return "Response data is nil"
         case .invalid(let function, let method, _):
-            return "Invalid function '\(function)' for this method '\(method)'"
+            return "Invalid function '\(function)' for '\(method)' method"
         }
     }
     
@@ -241,7 +241,9 @@ enum OWMError: CustomNSError, LocalizedError {
         var userInfo = [String: Any]()
         switch self {
         case .invalid(_, _, let underlyingError):
-            userInfo[NSUnderlyingErrorKey] = underlyingError
+            if let error = underlyingError {
+                userInfo[NSUnderlyingErrorKey] = error
+            }
         default:
             break
         }
