@@ -147,25 +147,36 @@ public class RequestBuilder {
             block(.failure(OWMError.urlIsWrong))
             return nil
         }
-        return AF.request(url).response(queue: .main) { response in
+        return AF.request(url).responseDecodable(of: type, queue: .main) { response in
             if let error = response.error {
                 block(.failure(error))
                 return
             }
-            guard let data = response.data else {
+            guard let value = response.value else {
                 block(.failure(OWMError.responseDataIsNil))
                 return
             }
-            do {
-                print()
-                print(try? JSONSerialization.jsonObject(with: data, options: []))
-                print()
-                let result = try JSONDecoder().decode(type, from: data)
-                block(.success(result))
-            } catch let error {
-                block(.failure(OWMError.cantDecodeType(underlyingError: error)))
-            }
+            block(.success(value))
         }.task
+//        return AF.request(url).response(queue: .main) { response in
+//            if let error = response.error {
+//                block(.failure(error))
+//                return
+//            }
+//            guard let data = response.data else {
+//                block(.failure(OWMError.responseDataIsNil))
+//                return
+//            }
+//            do {
+//                print()
+//                print(try? JSONSerialization.jsonObject(with: data, options: []))
+//                print()
+//                let result = try JSONDecoder().decode(type, from: data)
+//                block(.success(result))
+//            } catch let error {
+//                block(.failure(OWMError.cantDecodeType(underlyingError: error)))
+//            }
+//        }.task
     }
     
     private func buildUrl() -> URL? {
