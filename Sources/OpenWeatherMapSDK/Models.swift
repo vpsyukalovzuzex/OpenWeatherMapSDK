@@ -40,8 +40,7 @@ public struct Weather: Decodable, CustomStringConvertible {
         case iconName = "icon"
     }
     
-    var id: Int
-    
+    var id:       String
     var main:     String
     var text:     String
     var iconName: String
@@ -53,7 +52,7 @@ public struct Weather: Decodable, CustomStringConvertible {
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: WeatherCodingKey.self)
         
-        self.id       = try container.decode(Int.self, forKey: .id)
+        self.id       = try container.decode(String.self, forKey: .id)
         self.main     = try container.decode(String.self, forKey: .main)
         self.text     = try container.decode(String.self, forKey: .text)
         self.iconName = try container.decode(String.self, forKey: .iconName)
