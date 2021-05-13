@@ -15,8 +15,8 @@ public struct Coordinates: Decodable, CustomStringConvertible {
         case longitude = "lon"
     }
     
-    var lat: Float
-    var lon: Float
+    var lat: Float?
+    var lon: Float?
     
     public var description: String {
         return "(latitude: \(lat), longitude: \(lon))"
@@ -40,11 +40,11 @@ public struct Weather: Decodable, CustomStringConvertible {
         case iconName = "icon"
     }
     
-    var id: Int
+    var id: Int?
     
-    var main:     String
-    var text:     String
-    var iconName: String
+    var main:     String?
+    var text:     String?
+    var iconName: String?
     
     public var description: String {
         return "(id: \(id), main: \(main), description: \(text), icon name: \(iconName))"
@@ -74,14 +74,14 @@ public struct CurrentMain: Decodable, CustomStringConvertible {
         case groundPressure = "grnd_level"
     }
     
-    var temp:           Float
-    var feelsLike:      Float
-    var pressure:       Float
-    var humidity:       Float
-    var tempMin:        Float
-    var tempMax:        Float
-    var seaPressure:    Float
-    var groundPressure: Float
+    var temp:           Float?
+    var feelsLike:      Float?
+    var pressure:       Float?
+    var humidity:       Float?
+    var tempMin:        Float?
+    var tempMax:        Float?
+    var seaPressure:    Float?
+    var groundPressure: Float?
     
     public var description: String {
         return "(temperature: \(temp) (min: \(tempMin), max: \(tempMax)), feels like: \(feelsLike), pressure: \(pressure) (sea: \(seaPressure), ground: \(groundPressure)), humidity: \(humidity)"
@@ -110,9 +110,9 @@ public struct Wind: Decodable, CustomStringConvertible {
         case gust    = "gust"
     }
     
-    var speed:   Float
-    var degrees: Float
-    var gust:    Float
+    var speed:   Float?
+    var degrees: Float?
+    var gust:    Float?
     
     public var description: String {
         return "(speed: \(speed), degrees: \(degrees), gust: \(gust))"
@@ -134,7 +134,7 @@ public struct Clouds: Decodable, CustomStringConvertible {
         case all = "all"
     }
     
-    var all: Float
+    var all: Float?
     
     public var description: String {
         return "(all: \(all))"
@@ -155,8 +155,8 @@ public struct Hours: Decodable, CustomStringConvertible {
         case h3 = "3h"
     }
     
-    var h1: Float
-    var h3: Float
+    var h1: Float?
+    var h3: Float?
     
     public var description: String {
         return ("1: \(h1), 3: \(h3))")
@@ -179,10 +179,10 @@ public struct System: Decodable, CustomStringConvertible {
         case sunset  = "sunset"
     }
     
-    var country: String
+    var country: String?
     
-    var sunrise: Int
-    var sunset:  Int
+    var sunrise: Int?
+    var sunset:  Int?
     
     public var description: String {
         return "(country: \(country), sunrise: \(sunrise), sunset: \(sunset))"
@@ -215,25 +215,25 @@ public struct CurrentWeather: Decodable, CustomStringConvertible {
         case cityName    = "name"
     }
     
-    var coordinates: Coordinates
+    var coordinates: Coordinates?
     
-    var weather: [Weather]
+    var weather: [Weather]?
     
-    var main: CurrentMain
+    var main: CurrentMain?
     
-    var clouds: Clouds
+    var clouds: Clouds?
     
-    var rain: Hours
-    var snow: Hours
+    var rain: Hours?
+    var snow: Hours?
     
-    var date: Int
+    var date: Int?
     
-    var system: System
+    var system: System?
     
-    var timezone: Int
+    var timezone: Int?
     
-    var cityId: String
-    var cityName: String
+    var cityId: String?
+    var cityName: String?
     
     public var description: String {
         return "(coordinates: \(coordinates), weather: \(weather), main: \(main), clouds: \(clouds), rain: \(rain), show: \(snow), date: \(date), system: \(system), timezone: \(timezone), cityId: \(cityId), cityName: \(cityName))"
