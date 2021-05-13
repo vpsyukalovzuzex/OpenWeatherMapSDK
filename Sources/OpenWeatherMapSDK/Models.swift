@@ -216,7 +216,7 @@ public struct CurrentWeather: Decodable, CustomStringConvertible {
     
     var coordinates: Coordinates
     
-    var weather: Weather
+    var weather: [Weather]
     
     var main: CurrentMain
     
@@ -242,7 +242,7 @@ public struct CurrentWeather: Decodable, CustomStringConvertible {
         let container = try decoder.container(keyedBy: CurrentWeatherCodingKey.self)
         
         self.coordinates = try container.decode(Coordinates.self, forKey: .coordinates)
-        self.weather     = try container.decode(Weather.self, forKey: .weather)
+        self.weather     = try container.decode([Weather].self, forKey: .weather)
         self.main        = try container.decode(CurrentMain.self, forKey: .main)
         self.clouds      = try container.decode(Clouds.self, forKey: .clouds)
         self.rain        = try container.decode(Hours.self, forKey: .rain)
