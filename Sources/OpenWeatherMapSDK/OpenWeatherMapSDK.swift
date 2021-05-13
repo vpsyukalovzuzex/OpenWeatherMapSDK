@@ -226,27 +226,25 @@ enum OWMError: CustomNSError, LocalizedError {
         }
     }
     
+    var errorUserInfo: [String : Any] {
+        var result = [String: Any]()
+        switch self {
+        case .invalid(_, _, let underlyingError):
+            result[NSUnderlyingErrorKey] = underlyingError
+        default:
+            break
+        }
+        return result
+    }
+    
     var errorDescription: String? {
         switch self {
         case .urlIsWrong:
             return "URL is wrong"
         case .valueIsNil:
-            return "Response data is nil"
+            return "Value is nil"
         case .invalid(let function, let method, _):
             return "Invalid function '\(function)' for '\(method)' method"
         }
-    }
-    
-    var errorUserInfo: [String : Any] {
-        var userInfo = [String: Any]()
-        switch self {
-        case .invalid(_, _, let underlyingError):
-            if let error = underlyingError {
-                userInfo[NSUnderlyingErrorKey] = error
-            }
-        default:
-            break
-        }
-        return userInfo
     }
 }
