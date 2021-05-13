@@ -82,6 +82,8 @@ public class RequestBuilder {
     
     internal var parameters: [String: String]
     
+    internal var error: Error?
+    
     public init(_ method: Method) {
         self.method = method
         self.parameters = [String: String]()
@@ -105,8 +107,8 @@ public class RequestBuilder {
     }
     
     @discardableResult
-    public func city(name: String, stateCode: String? = nil, countryCode: String? = nil) throws -> Self {
-        try checkA()
+    public func city(name: String, stateCode: String? = nil, countryCode: String? = nil) -> Self {
+        check()
         let result = [name, stateCode, countryCode].compactMap { $0 }.joined(separator: ",")
         parameters["q"] = result
         return self
@@ -114,14 +116,14 @@ public class RequestBuilder {
     
     @discardableResult
     public func id(_ id: String) throws -> Self {
-        try checkA()
+        check()
         parameters["id"] = id
         return self
     }
     
     @discardableResult
-    public func coordinates(lat: Float, lon: Float) throws -> Self {
-        try checkA()
+    public func coordinates(lat: Float, lon: Float) -> Self {
+        check()
         parameters["lat"] = String(lat)
         parameters["lon"] = String(lon)
         return self
@@ -129,21 +131,21 @@ public class RequestBuilder {
     
     @discardableResult
     public func zip(_ zip: String) throws -> Self {
-        try checkA()
+        check()
         parameters["zip"] = zip
         return self
     }
     
     @discardableResult
-    public func rectangle(lonLeft: Float, latBottom: Float, lonRight: Float, latTop: Float, zoom: Float = 10.0) throws -> Self {
-        try checkB()
+    public func rectangle(lonLeft: Float, latBottom: Float, lonRight: Float, latTop: Float, zoom: Float = 10.0) -> Self {
+        checkRectangle()
         parameters["bbox"] = "\(lonLeft),\(latBottom),\(lonRight),\(latTop),\(zoom)"
         return self
     }
     
     @discardableResult
-    public func circle(_ number: Int) throws -> Self {
-        try checkB()
+    public func circle(_ number: Int) -> Self {
+        checkCircle()
         let cnt = number <= 0 ? 1 : (number > 50 ? 50 : number)
         parameters["cnt"] = String(cnt)
         return self
@@ -151,6 +153,10 @@ public class RequestBuilder {
     
     @discardableResult
     public func request<T: Decodable>(_ type: T.Type, _ block: @escaping (Result<T, Error>) -> Void) -> URLSessionTask? {
+        if let error = error {
+            block(.failure(error))
+            return nil
+        }
         guard let url = buildUrl() else {
             block(.failure(OWMError.urlIsWrong))
             return nil
@@ -175,19 +181,25 @@ public class RequestBuilder {
         return URL(string: urlString)
     }
     
-    private func checkA() throws {
+    private func check() {
         let methods: [Method] = [
             .currentWeatherByRectangle,
             .currentWeatherByCircle
         ]
         if methods.contains(method) {
-            throw OWMError.invalidFunction
+            error = OWMError.invalidFunction
         }
     }
     
-    private func checkB() throws {
+    private func checkRectangle() {
         if method != .currentWeatherByRectangle {
-            throw OWMError.invalidFunction
+            error = OWMError.invalidFunction
+        }
+    }
+    
+    private func checkCircle() {
+        if method != .currentWeatherByCircle {
+            error = OWMError.invalidFunction
         }
     }
 }

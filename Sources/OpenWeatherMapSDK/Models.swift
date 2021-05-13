@@ -185,7 +185,7 @@ public struct Hours: Decodable, CustomStringConvertible {
     public var h3: Float
     
     public var description: String {
-        return ("1: \(h1), 3: \(h3))")
+        return "(1: \(h1), 3: \(h3))"
     }
     
     internal init() {
