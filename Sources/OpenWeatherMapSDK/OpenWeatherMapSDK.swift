@@ -2,11 +2,22 @@
 import Foundation
 import Alamofire
 
-public enum Method: String {
+public enum Method: String, CustomStringConvertible {
     
     case currentWeather            = "/weather"
     case currentWeatherByRectangle = "/box/city"
     case currentWeatherByCircle    = "/find"
+    
+    public var description: String {
+        switch self {
+        case .currentWeather:
+            return "currentWeather"
+        case .currentWeatherByRectangle:
+            return "currentWeatherByRectangle"
+        case .currentWeatherByCircle:
+            return "currentWeatherByCircle"
+        }
+    }
 }
 
 public enum Units: String {
@@ -108,7 +119,7 @@ public class RequestBuilder {
     
     @discardableResult
     public func city(name: String, stateCode: String? = nil, countryCode: String? = nil) -> Self {
-        check()
+        check(#function)
         let result = [name, stateCode, countryCode].compactMap { $0 }.joined(separator: ",")
         parameters["q"] = result
         return self
@@ -116,14 +127,14 @@ public class RequestBuilder {
     
     @discardableResult
     public func id(_ id: String) throws -> Self {
-        check()
+        check(#function)
         parameters["id"] = id
         return self
     }
     
     @discardableResult
     public func coordinates(lat: Float, lon: Float) -> Self {
-        check()
+        check(#function)
         parameters["lat"] = String(lat)
         parameters["lon"] = String(lon)
         return self
@@ -131,21 +142,25 @@ public class RequestBuilder {
     
     @discardableResult
     public func zip(_ zip: String) throws -> Self {
-        check()
+        check(#function)
         parameters["zip"] = zip
         return self
     }
     
     @discardableResult
     public func rectangle(lonLeft: Float, latBottom: Float, lonRight: Float, latTop: Float, zoom: Float = 10.0) -> Self {
-        checkRectangle()
+        if method != .currentWeatherByRectangle {
+            error = OWMError.invalid(function: #function, method: "\(method)", underlyingError: error)
+        }
         parameters["bbox"] = "\(lonLeft),\(latBottom),\(lonRight),\(latTop),\(zoom)"
         return self
     }
     
     @discardableResult
     public func circle(_ number: Int) -> Self {
-        checkCircle()
+        if method != .currentWeatherByCircle {
+            error = OWMError.invalid(function: #function, method: "\(method)", underlyingError: error)
+        }
         let cnt = number <= 0 ? 1 : (number > 50 ? 50 : number)
         parameters["cnt"] = String(cnt)
         return self
@@ -181,32 +196,20 @@ public class RequestBuilder {
         return URL(string: urlString)
     }
     
-    private func check() {
+    private func check(_ function: String) {
         let methods: [Method] = [
             .currentWeatherByRectangle,
             .currentWeatherByCircle
         ]
         if methods.contains(method) {
-            error = OWMError.invalidFunction
-        }
-    }
-    
-    private func checkRectangle() {
-        if method != .currentWeatherByRectangle {
-            error = OWMError.invalidFunction
-        }
-    }
-    
-    private func checkCircle() {
-        if method != .currentWeatherByCircle {
-            error = OWMError.invalidFunction
+            error = OWMError.invalid(function: function, method: "\(method)", underlyingError: error)
         }
     }
 }
 
 enum OWMError: CustomNSError, LocalizedError {
     
-    case urlIsWrong, valueIsNil, invalidFunction
+    case urlIsWrong, valueIsNil, invalid(function: String, method: String, underlyingError: Error?)
     
     static var errorDomain: String {
         return "OpenWeatherMapErrorDomain"
@@ -218,8 +221,8 @@ enum OWMError: CustomNSError, LocalizedError {
             return -100
         case .valueIsNil:
             return -101
-        case .invalidFunction:
-            return -200
+        case .invalid:
+            return -300
         }
     }
     
@@ -229,8 +232,19 @@ enum OWMError: CustomNSError, LocalizedError {
             return "URL is wrong"
         case .valueIsNil:
             return "Response data is nil"
-        case .invalidFunction:
-            return "Invalid function for this method"
+        case .invalid(let function, let method, _):
+            return "Invalid function '\(function)' for this method '\(method)'"
         }
+    }
+    
+    var errorUserInfo: [String : Any] {
+        var userInfo = [String: Any]()
+        switch self {
+        case .invalid(_, _, let underlyingError):
+            userInfo[NSUnderlyingErrorKey] = underlyingError
+        default:
+            break
+        }
+        return userInfo
     }
 }
