@@ -147,36 +147,17 @@ public class RequestBuilder {
             block(.failure(OWMError.urlIsWrong))
             return nil
         }
-        return AF.request(url).responseDecodable(of: type, queue: .main) { response in
+        return AF.request(url).validate().responseDecodable(of: type, queue: .main) { response in
             if let error = response.error {
                 block(.failure(error))
                 return
             }
             guard let value = response.value else {
-                block(.failure(OWMError.responseDataIsNil))
+                block(.failure(OWMError.valueIsNil))
                 return
             }
             block(.success(value))
         }.task
-//        return AF.request(url).response(queue: .main) { response in
-//            if let error = response.error {
-//                block(.failure(error))
-//                return
-//            }
-//            guard let data = response.data else {
-//                block(.failure(OWMError.responseDataIsNil))
-//                return
-//            }
-//            do {
-//                print()
-//                print(try? JSONSerialization.jsonObject(with: data, options: []))
-//                print()
-//                let result = try JSONDecoder().decode(type, from: data)
-//                block(.success(result))
-//            } catch let error {
-//                block(.failure(OWMError.cantDecodeType(underlyingError: error)))
-//            }
-//        }.task
     }
     
     private func buildUrl() -> URL? {
@@ -189,7 +170,7 @@ public class RequestBuilder {
 
 enum OWMError: CustomNSError, LocalizedError {
     
-    case urlIsWrong, responseDataIsNil, cantDecodeType(underlyingError: Error)
+    case urlIsWrong, valueIsNil
     
     static var errorDomain: String {
         return "OpenWeatherMapErrorDomain"
@@ -199,10 +180,8 @@ enum OWMError: CustomNSError, LocalizedError {
         switch self {
         case .urlIsWrong:
             return -100
-        case .responseDataIsNil:
+        case .valueIsNil:
             return -101
-        case .cantDecodeType:
-            return -102
         }
     }
     
@@ -210,19 +189,8 @@ enum OWMError: CustomNSError, LocalizedError {
         switch self {
         case .urlIsWrong:
             return "URL is wrong"
-        case .responseDataIsNil:
+        case .valueIsNil:
             return "Response data is nil"
-        case .cantDecodeType:
-            return "Can't decode type"
-        }
-    }
-    
-    var errorUserInfo: [String : Any] {
-        switch self {
-        case .cantDecodeType(let error):
-            return [NSUnderlyingErrorKey: error]
-        default:
-            return [:]
         }
     }
 }

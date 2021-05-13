@@ -21,6 +21,12 @@ public struct Coordinates: Decodable, CustomStringConvertible {
     public var description: String {
         return "(latitude: \(lat), longitude: \(lon))"
     }
+    
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CoordinatesCodingKey.self)
+        self.lat = (try? container.decode(Float.self, forKey: .lat)) ?? 0.0
+        self.lon = (try? container.decode(Float.self, forKey: .lon)) ?? 0.0
+    }
 }
 
 public struct Weather: Decodable, CustomStringConvertible {
