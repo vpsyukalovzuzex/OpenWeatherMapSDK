@@ -18,52 +18,52 @@ public enum Units: String {
 
 public enum Language: String {
     
-    case afrikaans = "af"
-    case albanian = "al"
-    case arabic = "ar"
-    case azerbaijani = "az"
-    case bulgarian = "bg"
-    case catalan = "ca"
-    case czech = "cz"
-    case danish = "da"
-    case german = "de"
-    case greek = "el"
-    case english = "en"
-    case basque = "eu"
-    case persian = "fa"
-    case finnish = "fi"
-    case french = "fr"
-    case galician = "gl"
-    case hebrew = "he"
-    case hindi = "hi"
-    case croatian = "hr"
-    case hungarian = "hu"
-    case indonesian = "id"
-    case italian = "it"
-    case japanese = "ja"
-    case korean = "kr"
-    case latvian = "la"
-    case lithuanian = "lt"
-    case macedonian = "mk"
-    case norwegian = "no"
-    case dutch = "nl"
-    case polish = "pl"
-    case portuguese = "pt"
-    case portuguesBrasil = "pt_br"
-    case romanian = "ro"
-    case russian = "ru"
-    case swedish = "sv"
-    case slovak = "sk"
-    case slovenian = "sl"
-    case spanish = "sp"
-    case serbian = "sr"
-    case thai = "th"
-    case turkish = "tr"
-    case ukrainian = "ua"
-    case vietnamese = "vi"
+    case afrikaans          = "af"
+    case albanian           = "al"
+    case arabic             = "ar"
+    case azerbaijani        = "az"
+    case bulgarian          = "bg"
+    case catalan            = "ca"
+    case czech              = "cz"
+    case danish             = "da"
+    case german             = "de"
+    case greek              = "el"
+    case english            = "en"
+    case basque             = "eu"
+    case persian            = "fa"
+    case finnish            = "fi"
+    case french             = "fr"
+    case galician           = "gl"
+    case hebrew             = "he"
+    case hindi              = "hi"
+    case croatian           = "hr"
+    case hungarian          = "hu"
+    case indonesian         = "id"
+    case italian            = "it"
+    case japanese           = "ja"
+    case korean             = "kr"
+    case latvian            = "la"
+    case lithuanian         = "lt"
+    case macedonian         = "mk"
+    case norwegian          = "no"
+    case dutch              = "nl"
+    case polish             = "pl"
+    case portuguese         = "pt"
+    case portuguesBrasil    = "pt_br"
+    case romanian           = "ro"
+    case russian            = "ru"
+    case swedish            = "sv"
+    case slovak             = "sk"
+    case slovenian          = "sl"
+    case spanish            = "sp"
+    case serbian            = "sr"
+    case thai               = "th"
+    case turkish            = "tr"
+    case ukrainian          = "ua"
+    case vietnamese         = "vi"
     case chineseSimplified  = "zh_cn"
     case chineseTraditional = "zh_tw"
-    case zulu = "zu"
+    case zulu               = "zu"
 }
 
 struct Constants {
@@ -102,40 +102,40 @@ public class RequestBuilder {
         return self
     }
     
-    public func city(name: String, stateCode: String? = nil, countryCode: String? = nil) -> Self {
+    public func city(name: String, stateCode: String? = nil, countryCode: String? = nil) throws -> Self {
+        try checkA()
         let result = [name, stateCode, countryCode].compactMap { $0 }.joined(separator: ",")
         parameters["q"] = result
         return self
     }
     
-    public func id(_ id: String) -> Self {
+    public func id(_ id: String) throws -> Self {
+        try checkA()
         parameters["id"] = id
         return self
     }
     
-    public func coordinates(lat: Float, lon: Float) -> Self {
+    public func coordinates(lat: Float, lon: Float) throws -> Self {
+        try checkA()
         parameters["lat"] = String(lat)
         parameters["lon"] = String(lon)
         return self
     }
     
-    public func zip(_ zip: String) -> Self {
+    public func zip(_ zip: String) throws -> Self {
+        try checkA()
         parameters["zip"] = zip
         return self
     }
     
-    public func rectangle(lonLeft: Float, latBottom: Float, lonRight: Float, latTop: Float, zoom: Float = 10.0) -> Self {
-        guard method == .currentWeatherByRectangle else {
-            fatalError("Invalid type for this function")
-        }
+    public func rectangle(lonLeft: Float, latBottom: Float, lonRight: Float, latTop: Float, zoom: Float = 10.0) throws -> Self {
+        try checkB()
         parameters["bbox"] = "\(lonLeft),\(latBottom),\(lonRight),\(latTop),\(zoom)"
         return self
     }
     
-    public func circle(_ number: Int) -> Self {
-        guard method == .currentWeatherByCircle else {
-            fatalError("Invalid type for this function")
-        }
+    public func circle(_ number: Int) throws -> Self {
+        try checkB()
         let cnt = number <= 0 ? 1 : (number > 50 ? 50 : number)
         parameters["cnt"] = String(cnt)
         return self
@@ -166,11 +166,27 @@ public class RequestBuilder {
         let urlString = Constants.baseUrl + method.rawValue + "?" + parametersString
         return URL(string: urlString)
     }
+    
+    private func checkA() throws {
+        let methods: [Method] = [
+            .currentWeatherByRectangle,
+            .currentWeatherByCircle
+        ]
+        if methods.contains(method) {
+            throw OWMError.invalidMethod
+        }
+    }
+    
+    private func checkB() throws {
+        if method != .currentWeatherByRectangle {
+            throw OWMError.invalidMethod
+        }
+    }
 }
 
 enum OWMError: CustomNSError, LocalizedError {
     
-    case urlIsWrong, valueIsNil
+    case urlIsWrong, valueIsNil, invalidMethod
     
     static var errorDomain: String {
         return "OpenWeatherMapErrorDomain"
@@ -182,6 +198,8 @@ enum OWMError: CustomNSError, LocalizedError {
             return -100
         case .valueIsNil:
             return -101
+        case .invalidMethod:
+            return -200
         }
     }
     
@@ -191,6 +209,8 @@ enum OWMError: CustomNSError, LocalizedError {
             return "URL is wrong"
         case .valueIsNil:
             return "Response data is nil"
+        case .invalidMethod:
+            return "Invalid method for this function"
         }
     }
 }
