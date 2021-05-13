@@ -156,11 +156,11 @@ public class RequestBuilder {
                 block(.failure(OWMError.responseDataIsNil))
                 return
             }
-            guard let result = try? JSONDecoder().decode(type, from: data) else {
-                block(.failure(OWMError.cantDecodeType))
-                return
+            do {
+                block(.success(try JSONDecoder().decode(type, from: data)))
+            } catch let error {
+                block(.failure(OWMError.cantDecodeType(underlyingError: error)))
             }
-            block(.success(result))
         }.task
     }
     
@@ -174,7 +174,7 @@ public class RequestBuilder {
 
 enum OWMError: CustomNSError, LocalizedError {
     
-    case urlIsWrong, responseDataIsNil, cantDecodeType
+    case urlIsWrong, responseDataIsNil, cantDecodeType(underlyingError: Error)
     
     static var errorDomain: String {
         return "OpenWeatherMapErrorDomain"
@@ -199,6 +199,15 @@ enum OWMError: CustomNSError, LocalizedError {
             return "Response data is nil"
         case .cantDecodeType:
             return "Can't decode type"
+        }
+    }
+    
+    var errorUserInfo: [String : Any] {
+        switch self {
+        case .cantDecodeType(let error):
+            return [NSUnderlyingErrorKey: error]
+        default:
+            return [:]
         }
     }
 }
