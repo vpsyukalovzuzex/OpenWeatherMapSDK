@@ -86,7 +86,13 @@ public class OpenWeatherMapSDK {
 
 public class RequestBuilder {
     
-    internal var method: Method
+    internal var method: Method {
+        willSet {
+            if method != .undefined {
+                fatalError("Invalid request builder funcion set")
+            }
+        }
+    }
     
     internal var parameters: [String]
     
@@ -159,6 +165,7 @@ public class RequestBuilder {
         return self
     }
     
+    @discardableResult
     public func request(_ block: @escaping (Result<Data, Error>) -> Void) -> URLSessionTask? {
         guard let url = buildUrl() else {
             block(.failure(OWMError.urlIsWrong))
