@@ -143,7 +143,7 @@ public struct CurrentWeather: Decodable, CustomStringConvertible {
     
     enum CurrentWeatherCodingKey: String, CodingKey {
         
-//        case coordinates = "coord"
+        case coordinates = "coord"
         case weather
         case main
         case wind
@@ -157,7 +157,7 @@ public struct CurrentWeather: Decodable, CustomStringConvertible {
         case cityName = "name"
     }
     
-//    var coordinates: Coordinates
+    var coordinates: Coordinates
     
     var weather: Weather
     
@@ -179,6 +179,6 @@ public struct CurrentWeather: Decodable, CustomStringConvertible {
     var cityName: String
     
     public var description: String {
-        return "(coordinates: \(123), weather: \(weather), main: \(main), clouds: \(clouds), rain: \(rain), show: \(snow), date: \(date), system: \(system), timezone: \(timezone), cityId: \(cityId), cityName: \(cityName))"
+        return "(coordinates: \(coordinates), weather: \(weather), main: \(main), clouds: \(clouds), rain: \(rain), show: \(snow), date: \(date), system: \(system), timezone: \(timezone), cityId: \(cityId), cityName: \(cityName))"
     }
 }

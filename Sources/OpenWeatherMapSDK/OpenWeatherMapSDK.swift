@@ -2,11 +2,11 @@
 import Foundation
 import Alamofire
 
-public enum Type: String {
+public enum Method: String {
     
-    case currentWeather          = "/weather"
-    case currentWeatherRectangle = "/box/city"
-    case currentWeatherCircle    = "/find"
+    case currentWeather            = "/weather"
+    case currentWeatherByRectangle = "/box/city"
+    case currentWeatherByCircle    = "/find"
 }
 
 public enum Units: String {
@@ -78,12 +78,12 @@ public class OpenWeatherMapSDK {
 
 public class RequestBuilder {
     
-    internal var type: Type
+    internal var method: Method
     
     internal var parameters: [String: String]
     
-    public init(_ type: Type) {
-        self.type = type
+    public init(_ method: Method) {
+        self.method = method
         self.parameters = [String: String]()
     }
     
@@ -125,7 +125,7 @@ public class RequestBuilder {
     }
     
     public func rectangle(lonLeft: Float, latBottom: Float, lonRight: Float, latTop: Float, zoom: Float = 10.0) -> Self {
-        guard type == .currentWeatherRectangle else {
+        guard method == .currentWeatherByRectangle else {
             fatalError("Invalid type for this function")
         }
         parameters["bbox"] = "\(lonLeft),\(latBottom),\(lonRight),\(latTop),\(zoom)"
@@ -133,7 +133,7 @@ public class RequestBuilder {
     }
     
     public func circle(_ number: Int) -> Self {
-        guard type == .currentWeatherCircle else {
+        guard method == .currentWeatherByCircle else {
             fatalError("Invalid type for this function")
         }
         let cnt = number <= 0 ? 1 : (number > 50 ? 50 : number)
@@ -157,7 +157,11 @@ public class RequestBuilder {
                 return
             }
             do {
-                block(.success(try JSONDecoder().decode(type, from: data)))
+                print()
+                print(try? JSONSerialization.jsonObject(with: data, options: []))
+                print()
+                let result = try JSONDecoder().decode(type, from: data)
+                block(.success(result))
             } catch let error {
                 block(.failure(OWMError.cantDecodeType(underlyingError: error)))
             }
@@ -167,7 +171,7 @@ public class RequestBuilder {
     private func buildUrl() -> URL? {
         parameters["appid"] = OpenWeatherMapSDK.apiKey
         let parametersString = parameters.map { $0 + "=" + $1 }.joined(separator: "&")
-        let urlString = Constants.baseUrl + type.rawValue + "?" + parametersString
+        let urlString = Constants.baseUrl + method.rawValue + "?" + parametersString
         return URL(string: urlString)
     }
 }
