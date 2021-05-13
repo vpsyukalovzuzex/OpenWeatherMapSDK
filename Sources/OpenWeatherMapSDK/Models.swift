@@ -24,8 +24,8 @@ public struct Coordinates: Decodable, CustomStringConvertible {
     
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CoordinatesCodingKey.self)
-        self.lat = (try? container.decode(Float.self, forKey: .lat)) ?? 0.0
-        self.lon = (try? container.decode(Float.self, forKey: .lon)) ?? 0.0
+        self.lat = try container.decode(Float.self, forKey: .lat)
+        self.lon = try container.decode(Float.self, forKey: .lon)
     }
 }
 
@@ -150,41 +150,47 @@ public struct CurrentWeather: Decodable, CustomStringConvertible {
     enum CurrentWeatherCodingKey: String, CodingKey {
         
         case coordinates = "coord"
-        case weather
-        case main
-        case wind
-        case clouds
-        case rain
-        case snow
-        case date = "dt"
-        case system = "sys"
-        case timezone
-        case cityId = "id"
-        case cityName = "name"
+//        case weather
+//        case main
+//        case wind
+//        case clouds
+//        case rain
+//        case snow
+//        case date = "dt"
+//        case system = "sys"
+//        case timezone
+//        case cityId = "id"
+//        case cityName = "name"
     }
     
     var coordinates: Coordinates
     
-    var weather: Weather
-    
-    var main: CurrentMain
-    
-    var clouds: Clouds
-    
-    var rain: Hours
-    var snow: Hours
-    
-    var date: Int
-    
-    var system: System
-    
-    var timezone: Int
-    
-    var cityId:   Int
-    
-    var cityName: String
+//    var weather: Weather
+//
+//    var main: CurrentMain
+//
+//    var clouds: Clouds
+//
+//    var rain: Hours
+//    var snow: Hours
+//
+//    var date: Int
+//
+//    var system: System
+//
+//    var timezone: Int
+//
+//    var cityId:   Int
+//
+//    var cityName: String
     
     public var description: String {
-        return "(coordinates: \(coordinates), weather: \(weather), main: \(main), clouds: \(clouds), rain: \(rain), show: \(snow), date: \(date), system: \(system), timezone: \(timezone), cityId: \(cityId), cityName: \(cityName))"
+        return "coord: \(coordinates)"
+//        return "(coordinates: \(coordinates), weather: \(weather), main: \(main), clouds: \(clouds), rain: \(rain), show: \(snow), date: \(date), system: \(system), timezone: \(timezone), cityId: \(cityId), cityName: \(cityName))"
+    }
+    
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CurrentWeatherCodingKey.self)
+        self.coordinates = try container.decode(Coordinates.self, forKey: .coordinates)
     }
 }
