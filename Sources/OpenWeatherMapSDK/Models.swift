@@ -15,18 +15,23 @@ public struct Coordinates: Decodable, CustomStringConvertible {
         case longitude = "lon"
     }
     
-    var lat: Float?
-    var lon: Float?
+    public var latitude: Float
+    public var longitude: Float
     
     public var description: String {
-        return "(latitude: \(lat), longitude: \(lon))"
+        return "(latitude: \(latitude), longitude: \(longitude))"
+    }
+    
+    internal init() {
+        self.latitude  = 0.0
+        self.longitude = 0.0
     }
     
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CoordinatesCodingKey.self)
         
-        self.lat = try container.decode(Float.self, forKey: .latitude)
-        self.lon = try container.decode(Float.self, forKey: .longitude)
+        self.latitude  = (try? container.decode(Float.self, forKey: .latitude))  ?? 0.0
+        self.longitude = (try? container.decode(Float.self, forKey: .longitude)) ?? 0.0
     }
 }
 
@@ -40,11 +45,11 @@ public struct Weather: Decodable, CustomStringConvertible {
         case iconName = "icon"
     }
     
-    var id: Int?
+    public var id: Int
     
-    var main:     String?
-    var text:     String?
-    var iconName: String?
+    public var main:     String
+    public var text:     String
+    public var iconName: String
     
     public var description: String {
         return "(id: \(id), main: \(main), description: \(text), icon name: \(iconName))"
@@ -53,10 +58,10 @@ public struct Weather: Decodable, CustomStringConvertible {
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: WeatherCodingKey.self)
         
-        self.id       = try container.decode(Int.self, forKey: .id)
-        self.main     = try container.decode(String.self, forKey: .main)
-        self.text     = try container.decode(String.self, forKey: .text)
-        self.iconName = try container.decode(String.self, forKey: .iconName)
+        self.id       = (try? container.decode(Int.self,    forKey: .id))       ?? 0
+        self.main     = (try? container.decode(String.self, forKey: .main))     ?? ""
+        self.text     = (try? container.decode(String.self, forKey: .text))     ?? ""
+        self.iconName = (try? container.decode(String.self, forKey: .iconName)) ?? ""
     }
 }
 
@@ -74,30 +79,41 @@ public struct CurrentMain: Decodable, CustomStringConvertible {
         case groundPressure = "grnd_level"
     }
     
-    var temp:           Float?
-    var feelsLike:      Float?
-    var pressure:       Float?
-    var humidity:       Float?
-    var tempMin:        Float?
-    var tempMax:        Float?
-    var seaPressure:    Float?
-    var groundPressure: Float?
+    public var temp:           Float
+    public var feelsLike:      Float
+    public var pressure:       Float
+    public var humidity:       Float
+    public var tempMin:        Float
+    public var tempMax:        Float
+    public var seaPressure:    Float
+    public var groundPressure: Float
     
     public var description: String {
         return "(temperature: \(temp) (min: \(tempMin), max: \(tempMax)), feels like: \(feelsLike), pressure: \(pressure) (sea: \(seaPressure), ground: \(groundPressure)), humidity: \(humidity)"
     }
     
+    internal init() {
+        self.temp           = 0.0
+        self.feelsLike      = 0.0
+        self.pressure       = 0.0
+        self.humidity       = 0.0
+        self.tempMin        = 0.0
+        self.tempMax        = 0.0
+        self.seaPressure    = 0.0
+        self.groundPressure = 0.0
+    }
+    
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CurrentMainCodingKey.self)
         
-        self.temp           = try container.decode(Float.self, forKey: .temp)
-        self.feelsLike      = try container.decode(Float.self, forKey: .feelsLike)
-        self.pressure       = try container.decode(Float.self, forKey: .pressure)
-        self.humidity       = try container.decode(Float.self, forKey: .humidity)
-        self.tempMin        = try container.decode(Float.self, forKey: .tempMin)
-        self.tempMax        = try container.decode(Float.self, forKey: .tempMax)
-        self.seaPressure    = try container.decode(Float.self, forKey: .seaPressure)
-        self.groundPressure = try container.decode(Float.self, forKey: .groundPressure)
+        self.temp           = (try? container.decode(Float.self, forKey: .temp))           ?? 0.0
+        self.feelsLike      = (try? container.decode(Float.self, forKey: .feelsLike))      ?? 0.0
+        self.pressure       = (try? container.decode(Float.self, forKey: .pressure))       ?? 0.0
+        self.humidity       = (try? container.decode(Float.self, forKey: .humidity))       ?? 0.0
+        self.tempMin        = (try? container.decode(Float.self, forKey: .tempMin))        ?? 0.0
+        self.tempMax        = (try? container.decode(Float.self, forKey: .tempMax))        ?? 0.0
+        self.seaPressure    = (try? container.decode(Float.self, forKey: .seaPressure))    ?? 0.0
+        self.groundPressure = (try? container.decode(Float.self, forKey: .groundPressure)) ?? 0.0
     }
 }
 
@@ -110,20 +126,26 @@ public struct Wind: Decodable, CustomStringConvertible {
         case gust    = "gust"
     }
     
-    var speed:   Float?
-    var degrees: Float?
-    var gust:    Float?
+    public var speed:   Float
+    public var degrees: Float
+    public var gust:    Float
     
     public var description: String {
         return "(speed: \(speed), degrees: \(degrees), gust: \(gust))"
     }
     
+    internal init() {
+        self.speed   = 0.0
+        self.degrees = 0.0
+        self.gust    = 0.0
+    }
+    
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: WindCodingKey.self)
         
-        self.speed   = try container.decode(Float.self, forKey: .speed)
-        self.degrees = try container.decode(Float.self, forKey: .degrees)
-        self.gust    = try container.decode(Float.self, forKey: .gust)
+        self.speed   = (try? container.decode(Float.self, forKey: .speed))   ?? 0.0
+        self.degrees = (try? container.decode(Float.self, forKey: .degrees)) ?? 0.0
+        self.gust    = (try? container.decode(Float.self, forKey: .gust))    ?? 0.0
     }
 }
 
@@ -134,16 +156,20 @@ public struct Clouds: Decodable, CustomStringConvertible {
         case all = "all"
     }
     
-    var all: Float?
+    public var all: Float
     
     public var description: String {
         return "(all: \(all))"
     }
     
+    internal init() {
+        self.all = 0.0
+    }
+    
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CloudsCodingKey.self)
         
-        self.all = try container.decode(Float.self, forKey: .all)
+        self.all = (try? container.decode(Float.self, forKey: .all)) ?? 0.0
     }
 }
 
@@ -155,18 +181,23 @@ public struct Hours: Decodable, CustomStringConvertible {
         case h3 = "3h"
     }
     
-    var h1: Float?
-    var h3: Float?
+    public var h1: Float
+    public var h3: Float
     
     public var description: String {
         return ("1: \(h1), 3: \(h3))")
     }
     
+    internal init() {
+        self.h1 = 0.0
+        self.h3 = 0.0
+    }
+    
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: HoursCodingKey.self)
         
-        self.h1 = try container.decode(Float.self, forKey: .h1)
-        self.h3 = try container.decode(Float.self, forKey: .h3)
+        self.h1 = (try? container.decode(Float.self, forKey: .h1)) ?? 0.0
+        self.h3 = (try? container.decode(Float.self, forKey: .h3)) ?? 0.0
     }
 }
 
@@ -179,21 +210,27 @@ public struct System: Decodable, CustomStringConvertible {
         case sunset  = "sunset"
     }
     
-    var country: String?
+    public var country: String
     
-    var sunrise: Int?
-    var sunset:  Int?
+    public var sunrise: Int
+    public var sunset:  Int
     
     public var description: String {
         return "(country: \(country), sunrise: \(sunrise), sunset: \(sunset))"
     }
     
+    internal init() {
+        self.country = ""
+        self.sunrise = 0
+        self.sunset  = 0
+    }
+    
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: SystemCodingKey.self)
         
-        self.country = try container.decode(String.self, forKey: .country)
-        self.sunrise = try container.decode(Int.self, forKey: .sunrise)
-        self.sunset = try container.decode(Int.self, forKey: .sunset)
+        self.country = (try? container.decode(String.self, forKey: .country)) ?? ""
+        self.sunrise = (try? container.decode(Int.self,    forKey: .sunrise)) ?? 0
+        self.sunset  = (try? container.decode(Int.self,    forKey: .sunset))  ?? 0
     }
 }
 
@@ -215,25 +252,25 @@ public struct CurrentWeather: Decodable, CustomStringConvertible {
         case cityName    = "name"
     }
     
-    var coordinates: Coordinates?
+    public var coordinates: Coordinates
     
-    var weather: [Weather]?
+    public var weather: [Weather]
     
-    var main: CurrentMain?
+    public var main: CurrentMain
     
-    var clouds: Clouds?
+    public var clouds: Clouds
     
-    var rain: Hours?
-    var snow: Hours?
+    public var rain: Hours
+    public var snow: Hours
     
-    var date: Int?
+    public var date: Int
     
-    var system: System?
+    public var system: System
     
-    var timezone: Int?
+    public var timezone: Int
     
-    var cityId: String?
-    var cityName: String?
+    public var cityId: String
+    public var cityName: String
     
     public var description: String {
         return "(coordinates: \(coordinates), weather: \(weather), main: \(main), clouds: \(clouds), rain: \(rain), show: \(snow), date: \(date), system: \(system), timezone: \(timezone), cityId: \(cityId), cityName: \(cityName))"
@@ -242,16 +279,16 @@ public struct CurrentWeather: Decodable, CustomStringConvertible {
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CurrentWeatherCodingKey.self)
         
-        self.coordinates = try container.decode(Coordinates.self, forKey: .coordinates)
-        self.weather     = try container.decode([Weather].self, forKey: .weather)
-        self.main        = try container.decode(CurrentMain.self, forKey: .main)
-        self.clouds      = try container.decode(Clouds.self, forKey: .clouds)
-        self.rain        = try container.decode(Hours.self, forKey: .rain)
-        self.snow        = try container.decode(Hours.self, forKey: .snow)
-        self.date        = try container.decode(Int.self, forKey: .date)
-        self.system      = try container.decode(System.self, forKey: .system)
-        self.timezone    = try container.decode(Int.self, forKey: .timezone)
-        self.cityId      = try container.decode(String.self, forKey: .cityId)
-        self.cityName    = try container.decode(String.self, forKey: .cityName)
+        self.coordinates = (try? container.decode(Coordinates.self, forKey: .coordinates)) ?? .init()
+        self.weather     = (try? container.decode([Weather].self,   forKey: .weather))     ?? []
+        self.main        = (try? container.decode(CurrentMain.self, forKey: .main))        ?? .init()
+        self.clouds      = (try? container.decode(Clouds.self,      forKey: .clouds))      ?? .init()
+        self.rain        = (try? container.decode(Hours.self,       forKey: .rain))        ?? .init()
+        self.snow        = (try? container.decode(Hours.self,       forKey: .snow))        ?? .init()
+        self.date        = (try? container.decode(Int.self,         forKey: .date))        ?? 0
+        self.system      = (try? container.decode(System.self,      forKey: .system))      ?? .init()
+        self.timezone    = (try? container.decode(Int.self,         forKey: .timezone))    ?? 0
+        self.cityId      = (try? container.decode(String.self,      forKey: .cityId))      ?? ""
+        self.cityName    = (try? container.decode(String.self,      forKey: .cityName))    ?? ""
     }
 }
