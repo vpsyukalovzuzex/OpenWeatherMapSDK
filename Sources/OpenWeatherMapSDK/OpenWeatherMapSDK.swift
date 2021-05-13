@@ -2,26 +2,18 @@
 import Foundation
 import Alamofire
 
-public enum ResponseFormat: String {
+public enum Type: String {
     
-    case json = ""
-    case xml = "xml"
-    case html = "html"
-}
-
-public enum Method: String {
-    
-    case undefined = ""
-    case weather = "/weather"
-    case rectangle = "/box/city"
-    case circle = "/find"
+    case currentWeather          = "/weather"
+    case currentWeatherRectangle = "/box/city"
+    case currentWeatherCircle    = "/find"
 }
 
 public enum Units: String {
     
     case standard = "standard"
     case imperial = "imperial"
-    case metric = "metric"
+    case metric   = "metric"
 }
 
 public enum Language: String {
@@ -69,7 +61,7 @@ public enum Language: String {
     case turkish = "tr"
     case ukrainian = "ua"
     case vietnamese = "vi"
-    case chineseSimplified = "zh_cn"
+    case chineseSimplified  = "zh_cn"
     case chineseTraditional = "zh_tw"
     case zulu = "zu"
 }
@@ -86,29 +78,13 @@ public class OpenWeatherMapSDK {
 
 public class RequestBuilder {
     
-    internal var method: Method {
-        willSet {
-            if method != .undefined {
-                fatalError("Invalid request builder funcion set")
-            }
-        }
-    }
+    internal var type: Type
     
-    internal var parameters: [String]
+    internal var parameters: [String: String]
     
-    public init() {
-        self.method = .undefined
-        self.parameters = [String]()
-    }
-    
-    public func responseFormat(_ responseFormat: ResponseFormat) -> Self {
-        switch responseFormat {
-        case .json:
-            break
-        default:
-            parameters.append("mode=" + responseFormat.rawValue)
-        }
-        return self
+    public init(_ type: Type) {
+        self.type = type
+        self.parameters = [String: String]()
     }
     
     public func units(_ units: Units) -> Self {
@@ -116,88 +92,89 @@ public class RequestBuilder {
         case .standard:
             break
         default:
-            parameters.append("units=" + units.rawValue)
+            parameters["units"] = units.rawValue
         }
         return self
     }
     
     public func language(_ language: Language) -> Self {
-        parameters.append("lang=" + language.rawValue)
+        parameters["lang"] = language.rawValue
         return self
     }
     
     public func city(name: String, stateCode: String? = nil, countryCode: String? = nil) -> Self {
-        method = .weather
         let result = [name, stateCode, countryCode].compactMap { $0 }.joined(separator: ",")
-        parameters.append("q=" + result)
+        parameters["q"] = result
         return self
     }
     
     public func id(_ id: String) -> Self {
-        method = .weather
-        parameters.append("id=" + id)
+        parameters["id"] = id
         return self
     }
     
     public func coordinates(lat: Float, lon: Float) -> Self {
-        method = .weather
-        parameters.append("lat=\(lat)")
-        parameters.append("lon=\(lon)")
+        parameters["lat"] = String(lat)
+        parameters["lon"] = String(lon)
         return self
     }
     
     public func zip(_ zip: String) -> Self {
-        method = .weather
-        parameters.append("zip=" + zip)
+        parameters["zip"] = zip
         return self
     }
     
     public func rectangle(lonLeft: Float, latBottom: Float, lonRight: Float, latTop: Float, zoom: Float = 10.0) -> Self {
-        method = .rectangle
-        parameters.append("bbox=\(lonLeft),\(latBottom),\(lonRight),\(latTop),\(zoom)")
+        guard type == .currentWeatherRectangle else {
+            fatalError("Invalid type for this function")
+        }
+        parameters["bbox"] = "\(lonLeft),\(latBottom),\(lonRight),\(latTop),\(zoom)"
         return self
     }
     
     public func circle(_ number: Int) -> Self {
-        method = .circle
+        guard type == .currentWeatherCircle else {
+            fatalError("Invalid type for this function")
+        }
         let cnt = number <= 0 ? 1 : (number > 50 ? 50 : number)
-        parameters.append("cnt=\(cnt)")
+        parameters["cnt"] = String(cnt)
         return self
     }
     
     @discardableResult
-    public func request(_ block: @escaping (Result<Data, Error>) -> Void) -> URLSessionTask? {
+    public func request<T: Decodable>(_ type: T.Type, _ block: @escaping (Result<T, Error>) -> Void) -> URLSessionTask? {
         guard let url = buildUrl() else {
             block(.failure(OWMError.urlIsWrong))
             return nil
         }
-        return AF.request(url, method: .get).response(queue: .main) { response in
+        return AF.request(url).response(queue: .main) { response in
             if let error = response.error {
                 block(.failure(error))
                 return
             }
-            if let data = response.data {
-                block(.success(data))
+            guard let data = response.data else {
+                block(.failure(OWMError.responseDataIsNil))
                 return
             }
-            block(.failure(OWMError.responseDataIsNil))
+            guard let result = try? JSONDecoder().decode(type, from: data) else {
+                block(.failure(OWMError.cantDecodeType))
+                return
+            }
+            block(.success(result))
         }.task
     }
     
     private func buildUrl() -> URL? {
-        if method == .undefined {
-            return nil
-        }
-        parameters.append("appid=" + OpenWeatherMapSDK.apiKey)
-        let parametersString = parameters.joined(separator: "&")
-        let urlString = Constants.baseUrl + method.rawValue + "?" + parametersString
+        parameters["appid"] = OpenWeatherMapSDK.apiKey
+        let parametersString = parameters.map { $0 + "=" + $1 }.joined(separator: "&")
+        let urlString = Constants.baseUrl + type.rawValue + "?" + parametersString
         return URL(string: urlString)
     }
 }
 
 enum OWMError: CustomNSError, LocalizedError {
     
-    case urlIsWrong, responseDataIsNil
+    case urlIsWrong, responseDataIsNil, cantDecodeType
     
     static var errorDomain: String {
         return "OpenWeatherMapErrorDomain"
@@ -209,6 +186,8 @@ enum OWMError: CustomNSError, LocalizedError {
             return -100
         case .responseDataIsNil:
             return -101
+        case .cantDecodeType:
+            return -102
         }
     }
     
@@ -218,6 +197,8 @@ enum OWMError: CustomNSError, LocalizedError {
             return "URL is wrong"
         case .responseDataIsNil:
             return "Response data is nil"
+        case .cantDecodeType:
+            return "Can't decode type"
         }
     }
 }
