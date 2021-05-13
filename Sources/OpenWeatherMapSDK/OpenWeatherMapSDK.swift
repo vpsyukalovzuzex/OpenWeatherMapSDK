@@ -126,7 +126,7 @@ public class RequestBuilder {
     }
     
     @discardableResult
-    public func id(_ id: String) throws -> Self {
+    public func id(_ id: String) -> Self {
         check(#function)
         parameters["id"] = id
         return self
@@ -141,7 +141,7 @@ public class RequestBuilder {
     }
     
     @discardableResult
-    public func zip(_ zip: String) throws -> Self {
+    public func zip(_ zip: String) -> Self {
         check(#function)
         parameters["zip"] = zip
         return self
