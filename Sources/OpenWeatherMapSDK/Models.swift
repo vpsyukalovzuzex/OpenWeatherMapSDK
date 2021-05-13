@@ -18,7 +18,7 @@ public struct Coordinates: Decodable, CustomStringConvertible {
     var lat: Float
     var lon: Float
     
-    var description: String {
+    public var description: String {
         return "(latitude: \(lat), longitude: \(lon))"
     }
 }
@@ -39,7 +39,7 @@ public struct Weather: Decodable, CustomStringConvertible {
     var text:     String
     var iconName: String
     
-    var description: String {
+    public var description: String {
         return "(id: \(id), main: \(main), description: \(text), icon name: \(iconName))"
     }
 }
@@ -67,7 +67,7 @@ public struct CurrentMain: Decodable, CustomStringConvertible {
     var seaPressure:    Float
     var groundPressure: Float
     
-    var description: String {
+    public var description: String {
         return "(temperature: \(temp) (min: \(tempMin), max: \(tempMax)), feels like: \(feelsLike), pressure: \(pressure) (sea: \(seaPressure), ground: \(groundPressure)), humidity: \(humidity)"
     }
 }
@@ -85,7 +85,7 @@ public struct Wind: Decodable, CustomStringConvertible {
     var degrees: Float
     var gust:    Float
     
-    var description: String {
+    public var description: String {
         return "(speed: \(speed), degrees: \(degrees), gust: \(gust))"
     }
 }
@@ -99,7 +99,7 @@ public struct Clouds: Decodable, CustomStringConvertible {
     
     var all: Int
     
-    var description: String {
+    public var description: String {
         return "(all: \(all))"
     }
 }
@@ -115,7 +115,7 @@ public struct Hours: Decodable, CustomStringConvertible {
     var one:   Float
     var three: Float
     
-    var description: String {
+    public var description: String {
         return ("1: \(one), 3: \(three))")
     }
 }
@@ -134,7 +134,7 @@ public struct System: Decodable, CustomStringConvertible {
     var sunrise: Int
     var sunset:  Int
     
-    var description: String {
+    public var description: String {
         return "(country: \(country), sunrise: \(sunrise), sunset: \(sunset))"
     }
 }
@@ -178,7 +178,7 @@ public struct CurrentWeather: Decodable, CustomStringConvertible {
     
     var cityName: String
     
-    var description: String {
+    public var description: String {
         return "(coordinates: \(coordinates), weather: \(weather), main: \(main), clouds: \(clouds), rain: \(rain), show: \(snow), date: \(date), system: \(system), timezone: \(timezone), cityId: \(cityId), cityName: \(cityName))"
     }
 }
