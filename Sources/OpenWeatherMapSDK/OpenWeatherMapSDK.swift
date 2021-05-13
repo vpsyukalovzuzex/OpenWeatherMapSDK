@@ -87,6 +87,7 @@ public class RequestBuilder {
         self.parameters = [String: String]()
     }
     
+    @discardableResult
     public func units(_ units: Units) -> Self {
         switch units {
         case .standard:
@@ -97,11 +98,13 @@ public class RequestBuilder {
         return self
     }
     
+    @discardableResult
     public func language(_ language: Language) -> Self {
         parameters["lang"] = language.rawValue
         return self
     }
     
+    @discardableResult
     public func city(name: String, stateCode: String? = nil, countryCode: String? = nil) throws -> Self {
         try checkA()
         let result = [name, stateCode, countryCode].compactMap { $0 }.joined(separator: ",")
@@ -109,12 +112,14 @@ public class RequestBuilder {
         return self
     }
     
+    @discardableResult
     public func id(_ id: String) throws -> Self {
         try checkA()
         parameters["id"] = id
         return self
     }
     
+    @discardableResult
     public func coordinates(lat: Float, lon: Float) throws -> Self {
         try checkA()
         parameters["lat"] = String(lat)
@@ -122,18 +127,21 @@ public class RequestBuilder {
         return self
     }
     
+    @discardableResult
     public func zip(_ zip: String) throws -> Self {
         try checkA()
         parameters["zip"] = zip
         return self
     }
     
+    @discardableResult
     public func rectangle(lonLeft: Float, latBottom: Float, lonRight: Float, latTop: Float, zoom: Float = 10.0) throws -> Self {
         try checkB()
         parameters["bbox"] = "\(lonLeft),\(latBottom),\(lonRight),\(latTop),\(zoom)"
         return self
     }
     
+    @discardableResult
     public func circle(_ number: Int) throws -> Self {
         try checkB()
         let cnt = number <= 0 ? 1 : (number > 50 ? 50 : number)
@@ -173,20 +181,20 @@ public class RequestBuilder {
             .currentWeatherByCircle
         ]
         if methods.contains(method) {
-            throw OWMError.invalidMethod
+            throw OWMError.invalidFunction
         }
     }
     
     private func checkB() throws {
         if method != .currentWeatherByRectangle {
-            throw OWMError.invalidMethod
+            throw OWMError.invalidFunction
         }
     }
 }
 
 enum OWMError: CustomNSError, LocalizedError {
     
-    case urlIsWrong, valueIsNil, invalidMethod
+    case urlIsWrong, valueIsNil, invalidFunction
     
     static var errorDomain: String {
         return "OpenWeatherMapErrorDomain"
@@ -198,7 +206,7 @@ enum OWMError: CustomNSError, LocalizedError {
             return -100
         case .valueIsNil:
             return -101
-        case .invalidMethod:
+        case .invalidFunction:
             return -200
         }
     }
@@ -209,8 +217,8 @@ enum OWMError: CustomNSError, LocalizedError {
             return "URL is wrong"
         case .valueIsNil:
             return "Response data is nil"
-        case .invalidMethod:
-            return "Invalid method for this function"
+        case .invalidFunction:
+            return "Invalid function for this method"
         }
     }
 }
