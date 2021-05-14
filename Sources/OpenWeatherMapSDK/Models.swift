@@ -292,3 +292,17 @@ public struct CurrentWeather: Decodable, CustomStringConvertible {
         self.cityName    = (try? container.decode(String.self,      forKey: .cityName))    ?? ""
     }
 }
+
+public struct CurrentWeatherByRectangle: Decodable, CustomStringConvertible {
+    
+    public var description: String {
+        return ""
+    }
+}
+
+public struct CurrentWeatherByCircle: Decodable, CustomStringConvertible {
+    
+    public var description: String {
+        return ""
+    }
+}

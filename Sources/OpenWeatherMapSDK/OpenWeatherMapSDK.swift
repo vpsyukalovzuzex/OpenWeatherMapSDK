@@ -220,11 +220,11 @@ public class RequestBuilder {
                 error = OWMError.invalidType(type: typeString, method: methodString)
             }
         case .currentWeatherByRectangle:
-            if type != CurrentWeather.self {
+            if type != CurrentWeatherByRectangle.self {
                 error = OWMError.invalidType(type: typeString, method: methodString)
             }
         case .currentWeatherByCircle:
-            if type != CurrentWeather.self {
+            if type != CurrentWeatherByCircle.self {
                 error = OWMError.invalidType(type: typeString, method: methodString)
             }
         }
