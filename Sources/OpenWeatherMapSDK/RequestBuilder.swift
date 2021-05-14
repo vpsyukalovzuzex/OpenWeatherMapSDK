@@ -76,7 +76,7 @@ public class RequestBuilder {
     
     @discardableResult
     public func exclude(_ excludes: [Exclude]) -> Self {
-        let result = excludes.map { $0.rawValue }.joined(separator: ",")
+        let result = Array(Set(excludes)).map { $0.rawValue }.joined(separator: ",")
         parameters[Key.exclude.rawValue] = result
         return self
     }
