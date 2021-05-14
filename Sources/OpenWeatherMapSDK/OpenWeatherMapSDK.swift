@@ -265,10 +265,10 @@ public class RequestBuilder {
         }
         for key in keys {
             if !set.contains(key.rawValue) {
-                invalidFunctionError = OWMError.invalidFunction(
+                missingFunctionError = OWMError.missingFunction(
                     function: key.functionName,
                     method: "\(method)",
-                    underlyingError: invalidFunctionError
+                    underlyingError: missingFunctionError
                 )
             }
         }
