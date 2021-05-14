@@ -322,8 +322,8 @@ struct JSONError: Decodable, CustomStringConvertible {
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: JSONErrorCodingKey.self)
         
-        self.code    = try container.decode(Int.self,    forKey: .code)
-        self.message = try container.decode(String.self, forKey: .message)
+        self.code    = Int(try container.decode(String.self, forKey: .code)) ?? 400
+        self.message =     try container.decode(String.self, forKey: .message)
     }
     
     var description: String {
