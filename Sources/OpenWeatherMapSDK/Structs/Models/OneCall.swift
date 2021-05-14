@@ -212,8 +212,8 @@ public struct Daily: Decodable, CustomStringConvertible {
         self.moonrise    = (try? container.decode(Int.self,       forKey: .moonrise))    ?? 0
         self.moonset     = (try? container.decode(Int.self,       forKey: .moonset))     ?? 0
         self.moonPhase   = (try? container.decode(Float.self,     forKey: .moonPhase))   ?? 0.0
-        self.temp        = (try? container.decode(Temp.self,       forKey: .temp))       ?? .init()
-        self.feelsLike   = (try? container.decode(Temp.self,       forKey: .feelsLike))  ?? .init()
+        self.temp        = (try? container.decode(Temp.self,      forKey: .temp))        ?? .init()
+        self.feelsLike   = (try? container.decode(Temp.self,      forKey: .feelsLike))   ?? .init()
         self.pressure    = (try? container.decode(Float.self,     forKey: .pressure))    ?? 0.0
         self.humidity    = (try? container.decode(Float.self,     forKey: .humidity))    ?? 0.0
         self.dewPoint    = (try? container.decode(Float.self,     forKey: .dewPoint))    ?? 0.0
