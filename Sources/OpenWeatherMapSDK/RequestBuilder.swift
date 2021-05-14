@@ -141,7 +141,6 @@ public class RequestBuilder {
             keys = [
                 .q,
                 .id,
-                .lat,
                 .zip,
                 .bbox,
             ]
