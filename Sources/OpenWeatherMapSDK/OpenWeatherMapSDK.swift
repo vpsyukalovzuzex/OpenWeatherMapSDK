@@ -179,7 +179,14 @@ public class RequestBuilder {
         }
         return AF.request(url).validate().responseDecodable(of: type, queue: .main) { response in
             if let error = response.error {
-                block(.failure(error))
+                guard
+                    let data = response.data,
+                    let jsonError = try? JSONDecoder().decode(JSONError.self, from: data)
+                else {
+                    block(.failure(error))
+                    return
+                }
+                block(.failure(OWMError.badResponce(code: jsonError.code, message: jsonError.message)))
                 return
             }
             guard let value = response.value else {
@@ -305,6 +312,7 @@ public enum OWMError: CustomNSError, LocalizedError {
     case invalidFunction(function: String, method: String, underlyingError: Error?)
     case invalidType(type: String, method: String)
     case missingFunction(function: String, method: String, underlyingError: Error?)
+    case badResponce(code: Int, message: String)
     
     public static var errorDomain: String {
         return "OpenWeatherMapErrorDomain"
@@ -322,6 +330,8 @@ public enum OWMError: CustomNSError, LocalizedError {
             return -301
         case .missingFunction:
             return -302
+        case .badResponce(let code, _):
+            return code
         }
     }
     
@@ -352,6 +362,8 @@ public enum OWMError: CustomNSError, LocalizedError {
             return "Invalid type '\(type)' for '\(method)' method"
         case .missingFunction(let function, let method, _):
             return "Missing function '\(function)' for '\(method)' method"
+        case .badResponce(_, let message):
+            return message
         }
     }
 }

@@ -307,19 +307,26 @@ public struct CurrentWeatherByCircle: Decodable, CustomStringConvertible {
     }
 }
 
-//struct JSONError: Decodable, CustomStringConvertible {
-//    
-//    enum JSONErrorCodingKey: String, CodingKey {
-//        
-//        case code    = "cod"
-//        case message = "message"
-//    }
-//    
-//    var code: Int
-//    
-//    var message: String
-//    
-//    init(from decoder: Decoder) throws {
-//        let container = try decoder.container(keyedBy: <#T##CodingKey.Protocol#>)
-//    }
-//}
+struct JSONError: Decodable, CustomStringConvertible {
+    
+    enum JSONErrorCodingKey: String, CodingKey {
+        
+        case code    = "cod"
+        case message = "message"
+    }
+    
+    var code: Int
+    
+    var message: String
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: JSONErrorCodingKey.self)
+        
+        self.code    = try container.decode(Int.self,    forKey: .code)
+        self.message = try container.decode(String.self, forKey: .message)
+    }
+    
+    var description: String {
+        return "(code: \(code), message: \(message))"
+    }
+}
