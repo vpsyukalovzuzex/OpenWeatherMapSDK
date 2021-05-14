@@ -148,9 +148,9 @@ public class RequestBuilder {
     }
     
     @discardableResult
-    public func rectangle(lonLeft: Float, latBottom: Float, lonRight: Float, latTop: Float, zoom: Float = 10.0) -> Self {
+    public func rectangle(lonLeft: Float, latBottom: Float, lonRight: Float, latTop: Float, zoom: Int = 10) -> Self {
         if method != .currentWeatherByRectangle {
-            error = OWMError.invalid(function: #function, method: "\(method)", underlyingError: error)
+            error = OWMError.invalidFunction(function: #function, method: "\(method)", underlyingError: error)
         }
         parameters["bbox"] = "\(lonLeft),\(latBottom),\(lonRight),\(latTop),\(zoom)"
         return self
@@ -159,7 +159,7 @@ public class RequestBuilder {
     @discardableResult
     public func circle(_ number: Int) -> Self {
         if method != .currentWeatherByCircle {
-            error = OWMError.invalid(function: #function, method: "\(method)", underlyingError: error)
+            error = OWMError.invalidFunction(function: #function, method: "\(method)", underlyingError: error)
         }
         let cnt = number <= 0 ? 1 : (number > 50 ? 50 : number)
         parameters["cnt"] = String(cnt)
@@ -172,11 +172,14 @@ public class RequestBuilder {
             block(.failure(error))
             return nil
         }
+        if let error = check(type) {
+            block(.failure(error))
+            return nil
+        }
         guard let url = buildUrl() else {
             block(.failure(OWMError.urlIsWrong))
             return nil
         }
-        print("-->> \(url.absoluteString)")
         return AF.request(url).validate().responseDecodable(of: type, queue: .main) { response in
             if let error = response.error {
                 block(.failure(error))
@@ -203,14 +206,38 @@ public class RequestBuilder {
             .currentWeatherByCircle
         ]
         if methods.contains(method) {
-            error = OWMError.invalid(function: function, method: "\(method)", underlyingError: error)
+            error = OWMError.invalidFunction(function: function, method: "\(method)", underlyingError: error)
         }
+    }
+    
+    private func check<T: Decodable>(_ type: T.Type) -> Error? {
+        var error: Error?
+        let typeString = String(describing: type)
+        let methodString = "\(method)"
+        switch method {
+        case .currentWeather:
+            if type != CurrentWeather.self {
+                error = OWMError.invalidType(type: typeString, method: methodString)
+            }
+        case .currentWeatherByRectangle:
+            if type != CurrentWeather.self {
+                error = OWMError.invalidType(type: typeString, method: methodString)
+            }
+        case .currentWeatherByCircle:
+            if type != CurrentWeather.self {
+                error = OWMError.invalidType(type: typeString, method: methodString)
+            }
+        }
+        return error
     }
 }
 
 enum OWMError: CustomNSError, LocalizedError {
     
-    case urlIsWrong, valueIsNil, invalid(function: String, method: String, underlyingError: Error?)
+    case urlIsWrong
+    case valueIsNil
+    case invalidFunction(function: String, method: String, underlyingError: Error?)
+    case invalidType(type: String, method: String)
     
     static var errorDomain: String {
         return "OpenWeatherMapErrorDomain"
@@ -222,15 +249,17 @@ enum OWMError: CustomNSError, LocalizedError {
             return -100
         case .valueIsNil:
             return -101
-        case .invalid:
+        case .invalidFunction:
             return -300
+        case .invalidType:
+            return -301
         }
     }
     
     var errorUserInfo: [String : Any] {
         var result = [String: Any]()
         switch self {
-        case .invalid(_, _, let underlyingError):
+        case .invalidFunction(_, _, let underlyingError):
             result[NSUnderlyingErrorKey] = underlyingError
         default:
             break
@@ -244,8 +273,10 @@ enum OWMError: CustomNSError, LocalizedError {
             return "URL is wrong"
         case .valueIsNil:
             return "Value is nil"
-        case .invalid(let function, let method, _):
+        case .invalidFunction(let function, let method, _):
             return "Invalid function '\(function)' for '\(method)' method"
+        case .invalidType(let type, let method):
+            return "Invalid type '\(type)' for '\(method)' method"
         }
     }
 }
