@@ -202,12 +202,8 @@ public class RequestBuilder {
             if type != CurrentWeather.self {
                 result = invalidTypeError
             }
-        case .currentWeatherByRectangle:
-            if type != CurrentWeatherByRectangle.self {
-                result = invalidTypeError
-            }
-        case .currentWeatherByCircle:
-            if type != CurrentWeatherByCircle.self {
+        case .currentWeatherByRectangle, .currentWeatherByCircle:
+            if type != CurrentWeatherList.self {
                 result = invalidTypeError
             }
         }
