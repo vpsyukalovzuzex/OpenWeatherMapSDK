@@ -75,6 +75,13 @@ public class RequestBuilder {
     }
     
     @discardableResult
+    public func exclude(_ excludes: [Exclude]) -> Self {
+        let result = excludes.map { $0.rawValue }.joined(separator: ",")
+        parameters[Key.exclude.rawValue] = result
+        return self
+    }
+    
+    @discardableResult
     public func request<T: Decodable>(_ type: T.Type, _ block: @escaping (Result<T, Error>) -> Void) -> URLSessionTask? {
         checkInvalidFunctions()
         if let error = invalidFunctionError {
@@ -127,7 +134,8 @@ public class RequestBuilder {
         case .currentWeather:
             keys = [
                 .bbox,
-                .cnt
+                .cnt,
+                .exclude
             ]
         case .currentWeatherByRectangle:
             keys = [
@@ -136,6 +144,7 @@ public class RequestBuilder {
                 .lat,
                 .zip,
                 .cnt,
+                .exclude
             ]
         case .currentWeatherByCircle:
             keys = [
@@ -143,6 +152,15 @@ public class RequestBuilder {
                 .id,
                 .zip,
                 .bbox,
+                .exclude
+            ]
+        case .oneCall:
+            keys = [
+                .q,
+                .id,
+                .zip,
+                .cnt,
+                .bbox
             ]
         }
         for key in keys {
@@ -182,6 +200,10 @@ public class RequestBuilder {
                 .cnt,
                 .lat
             ]
+        case .oneCall:
+            keys = [
+                .lat
+            ]
         }
         for key in keys {
             if !set.contains(key.rawValue) {
@@ -204,6 +226,10 @@ public class RequestBuilder {
             }
         case .currentWeatherByRectangle, .currentWeatherByCircle:
             if type != CurrentWeatherList.self {
+                result = invalidTypeError
+            }
+        case .oneCall:
+            if type != OneCall.self {
                 result = invalidTypeError
             }
         }

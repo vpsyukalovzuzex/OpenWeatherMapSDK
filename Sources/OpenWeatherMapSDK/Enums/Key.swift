@@ -3,16 +3,17 @@ import Foundation
 
 internal enum Key: String {
     
-    case units = "units"
-    case lang  = "lang"
-    case q     = "q"
-    case id    = "id"
-    case lat   = "lat"
-    case lon   = "lon"
-    case zip   = "zip"
-    case bbox  = "bbox"
-    case cnt   = "cnt"
-    case appid = "appid"
+    case units   = "units"
+    case lang    = "lang"
+    case q       = "q"
+    case id      = "id"
+    case lat     = "lat"
+    case lon     = "lon"
+    case zip     = "zip"
+    case bbox    = "bbox"
+    case cnt     = "cnt"
+    case appid   = "appid"
+    case exclude = "exclude"
     
     var functionName: String {
         switch self {
