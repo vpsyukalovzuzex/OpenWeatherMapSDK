@@ -196,6 +196,9 @@ public class RequestBuilder {
         parameters[Keys.appid.rawValue] = OpenWeatherMapSDK.apiKey
         let parametersString = parameters.map { $0 + "=" + $1 }.joined(separator: "&")
         let urlString = Constants.baseUrl + method.rawValue + "?" + parametersString
+        #if DEBUG
+        print("URL string: \(urlString)")
+        #endif
         return URL(string: urlString)
     }
     
