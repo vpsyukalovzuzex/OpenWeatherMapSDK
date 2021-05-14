@@ -186,7 +186,11 @@ public class RequestBuilder {
                     block(.failure(error))
                     return
                 }
-                block(.failure(OWMError.badResponce(code: jsonError.code, message: jsonError.message)))
+                let owmError = OWMError.badResponce(
+                    code: Int(jsonError.code) ?? error.responseCode ?? 400,
+                    message: jsonError.message
+                )
+                block(.failure(owmError))
                 return
             }
             guard let value = response.value else {

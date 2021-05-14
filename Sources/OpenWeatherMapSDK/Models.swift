@@ -315,15 +315,14 @@ struct JSONError: Decodable, CustomStringConvertible {
         case message = "message"
     }
     
-    var code: Int
-    
+    var code: String
     var message: String
     
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: JSONErrorCodingKey.self)
         
-        self.code    = Int(try container.decode(String.self, forKey: .code)) ?? 400
-        self.message =     try container.decode(String.self, forKey: .message)
+        self.code    = try container.decode(String.self, forKey: .code)
+        self.message = try container.decode(String.self, forKey: .message)
     }
     
     var description: String {
