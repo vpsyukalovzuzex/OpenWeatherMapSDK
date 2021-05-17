@@ -8,6 +8,7 @@ public enum Method: String, CustomStringConvertible {
     case currentWeatherByCircle    = "/find"
     case oneCall                   = "/onecall"
     case direct                    = "/direct"
+    case reverse                   = "/reverse"
     
     public var api: String {
         switch self {
@@ -16,7 +17,8 @@ public enum Method: String, CustomStringConvertible {
              .currentWeatherByRectangle,
              .oneCall:
             return Constants.data
-        case .direct:
+        case .direct,
+             .reverse:
             return Constants.geo
         }
     }
@@ -33,6 +35,8 @@ public enum Method: String, CustomStringConvertible {
             return "oneCall"
         case .direct:
             return "direct"
+        case .reverse:
+            return "reverse"
         }
     }
 }

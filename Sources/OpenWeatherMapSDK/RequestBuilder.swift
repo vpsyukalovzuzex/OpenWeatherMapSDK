@@ -183,6 +183,17 @@ public class RequestBuilder {
                 .units,
                 .lang
             ]
+        case .reverse:
+            keys = [
+                .q,
+                .id,
+                .zip,
+                .bbox,
+                .cnt,
+                .exclude,
+                .units,
+                .lang
+            ]
         }
         for key in keys {
             if set.contains(key.rawValue) {
@@ -229,6 +240,10 @@ public class RequestBuilder {
             keys = [
                 .q
             ]
+        case .reverse:
+            keys = [
+                .lat
+            ]
         }
         for key in keys {
             if !set.contains(key.rawValue) {
@@ -257,7 +272,8 @@ public class RequestBuilder {
             if type != OneCall.self {
                 result = invalidTypeError
             }
-        case .direct:
+        case .direct,
+             .reverse:
             if type != [Geocoding].self {
                 result = invalidTypeError
             }
