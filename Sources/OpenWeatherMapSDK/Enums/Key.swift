@@ -14,6 +14,7 @@ internal enum Key: String {
     case cnt     = "cnt"
     case appid   = "appid"
     case exclude = "exclude"
+    case limit   = "limit"
     
     var functionName: String {
         switch self {
@@ -29,6 +30,8 @@ internal enum Key: String {
             return "rectangle(lonLeft:latBottom:lonRight:latTop:zoom:)"
         case .cnt:
             return "circle(_:)"
+        case .limit:
+            return "limit(_:)"
         default:
             return ""
         }

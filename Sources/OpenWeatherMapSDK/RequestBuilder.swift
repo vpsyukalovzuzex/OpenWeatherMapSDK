@@ -82,6 +82,12 @@ public class RequestBuilder {
     }
     
     @discardableResult
+    public func limit(_ limit: Int) -> Self {
+        parameters[Key.limit.rawValue] = "\(limit)"
+        return self
+    }
+    
+    @discardableResult
     public func request<T: Decodable>(_ type: T.Type, _ block: @escaping (Result<T, Error>) -> Void) -> URLSessionTask? {
         checkInvalidFunctions()
         if let error = invalidFunctionError {
@@ -135,7 +141,8 @@ public class RequestBuilder {
             keys = [
                 .bbox,
                 .cnt,
-                .exclude
+                .exclude,
+                .limit
             ]
         case .currentWeatherByRectangle:
             keys = [
@@ -144,7 +151,8 @@ public class RequestBuilder {
                 .lat,
                 .zip,
                 .cnt,
-                .exclude
+                .exclude,
+                .limit
             ]
         case .currentWeatherByCircle:
             keys = [
@@ -152,7 +160,8 @@ public class RequestBuilder {
                 .id,
                 .zip,
                 .bbox,
-                .exclude
+                .exclude,
+                .limit
             ]
         case .oneCall:
             keys = [
@@ -160,7 +169,19 @@ public class RequestBuilder {
                 .id,
                 .zip,
                 .cnt,
-                .bbox
+                .bbox,
+                .limit
+            ]
+        case .direct:
+            keys = [
+                .id,
+                .lat,
+                .zip,
+                .bbox,
+                .cnt,
+                .exclude,
+                .units,
+                .lang
             ]
         }
         for key in keys {
@@ -204,6 +225,10 @@ public class RequestBuilder {
             keys = [
                 .lat
             ]
+        case .direct:
+            keys = [
+                .q
+            ]
         }
         for key in keys {
             if !set.contains(key.rawValue) {
@@ -232,6 +257,10 @@ public class RequestBuilder {
             if type != OneCall.self {
                 result = invalidTypeError
             }
+        case .direct:
+            if type != [Geocoding].self {
+                result = invalidTypeError
+            }
         }
         return result
     }
@@ -239,7 +268,7 @@ public class RequestBuilder {
     private func buildUrl() -> URL? {
         parameters[Key.appid.rawValue] = OpenWeatherMapSDK.apiKey
         let parametersString = parameters.map { $0 + "=" + $1 }.joined(separator: "&")
-        let urlString = Constants.baseUrl + method.rawValue + "?" + parametersString
+        let urlString = Constants.baseUrl + method.api + method.rawValue + "?" + parametersString
         #if DEBUG
         print("URL string: \(urlString)")
         #endif
