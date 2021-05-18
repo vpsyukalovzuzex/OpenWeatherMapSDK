@@ -283,7 +283,7 @@ public class RequestBuilder {
     
     private func buildUrl() -> URL? {
         parameters[Key.appid.rawValue] = OpenWeatherMapSDK.apiKey
-        let parametersString = parameters.map { $0 + "=" + $1 }.joined(separator: "&")
+        let parametersString = parameters.map { $0 + "=" + ($1.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? $1) }.joined(separator: "&")
         let urlString = Constants.baseUrl + method.api + method.rawValue + "?" + parametersString
         #if DEBUG
         print("URL string: \(urlString)")
