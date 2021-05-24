@@ -7,7 +7,7 @@ public struct OneCall: Decodable, CustomStringConvertible {
         
         case lat            = "lat"
         case lon            = "lon"
-        case timezone       = "time_zone"
+        case timezone       = "timezone"
         case timezoneOffset = "timezone_offset"
         case current        = "current"
         case minutely       = "minutely"
@@ -19,7 +19,8 @@ public struct OneCall: Decodable, CustomStringConvertible {
     public var lat:            Float
     public var lon:            Float
     
-    public var timezone:       Int
+    public var timezone: String
+    
     public var timezoneOffset: Int
     
     public var current: OneCallCurrent
@@ -35,7 +36,7 @@ public struct OneCall: Decodable, CustomStringConvertible {
     init() {
         self.lat            = 0.0
         self.lon            = 0.0
-        self.timezone       = 0
+        self.timezone       = .init()
         self.timezoneOffset = 0
         self.current        = .init()
         self.minutely       = .init()
@@ -48,7 +49,7 @@ public struct OneCall: Decodable, CustomStringConvertible {
         let container = try decoder.container(keyedBy: OneCallCodingKey.self)
         self.lat            = (try? container.decode(Float.self,            forKey: .lat))            ?? 0.0
         self.lon            = (try? container.decode(Float.self,            forKey: .lon))            ?? 0.0
-        self.timezone       = (try? container.decode(Int.self,              forKey: .timezone))       ?? 0
+        self.timezone       = (try? container.decode(String.self,           forKey: .timezone))       ?? .init()
         self.timezoneOffset = (try? container.decode(Int.self,              forKey: .timezoneOffset)) ?? 0
         self.current        = (try? container.decode(OneCallCurrent.self,   forKey: .current))        ?? .init()
         self.minutely       = (try? container.decode([Minutely].self,       forKey: .minutely))       ?? .init()
