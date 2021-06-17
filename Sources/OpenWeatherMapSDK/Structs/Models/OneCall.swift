@@ -29,7 +29,7 @@ public struct OneCall: Decodable, CustomStringConvertible {
     
     public var hourly: [OneCallCurrent]
     
-    public var daily: [Daily]
+    public var daily: [OneCallCurrent]
     
     public var alerts: [Alert]
     
