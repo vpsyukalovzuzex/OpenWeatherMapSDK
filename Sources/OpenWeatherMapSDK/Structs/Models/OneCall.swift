@@ -29,7 +29,7 @@ public struct OneCall: Decodable, CustomStringConvertible {
     
     public var hourly: [OneCallCurrent]
     
-    public var daily: [OneCallCurrent]
+    public var daily: [Daily]
     
     public var alerts: [Alert]
     
@@ -54,7 +54,7 @@ public struct OneCall: Decodable, CustomStringConvertible {
         self.current        = (try? container.decode(OneCallCurrent.self,   forKey: .current))        ?? .init()
         self.minutely       = (try? container.decode([Minutely].self,       forKey: .minutely))       ?? .init()
         self.hourly         = (try? container.decode([OneCallCurrent].self, forKey: .hourly))         ?? .init()
-        self.daily          = (try? container.decode([OneCallCurrent].self, forKey: .daily))          ?? .init()
+        self.daily          = (try? container.decode([Daily].self,          forKey: .daily))          ?? .init()
         self.alerts         = (try? container.decode([Alert].self,          forKey: .alerts))         ?? .init()
     }
     
