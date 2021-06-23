@@ -107,7 +107,8 @@ public class RequestBuilder {
             block(.failure(OWMError.urlIsWrong))
             return nil
         }
-        return AF.request(url).validate().responseDecodable(of: type, queue: .main) { response in
+        let queue = DispatchQueue(label: "OpenWeatherMapSDK", qos: .userInitiated, attributes: .concurrent)
+        return AF.request(url).validate().responseDecodable(of: type, queue: queue) { response in
             if let error = response.error {
                 guard
                     let data = response.data,
